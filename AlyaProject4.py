@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output, State
 import plotly.express as px
 import pandas as pd
 
@@ -22,18 +22,44 @@ fig_country_counts.update_layout(
 )
 
 app.layout = html.Div(
-    [html.H1("Data Visualization"),
-     dcc.RadioItems(id='my-radio', options=['Country Counts'], value='Country Counts', inline=True),
-     dcc.Graph(id='graph-output', figure={})]
+    [
+        html.H1("Data Visualization"),
+        
+        # Radio Items
+        dcc.RadioItems(id='my-radio', options=['Country Counts', 'Aroma vs Flavor', 'Processing Method Comparison'], value='Country Counts', inline=True),
+        
+        # Graph Output
+        dcc.Graph(id='graph-output', figure={}),
+        
+        # Checkbox
+        dcc.Checklist(id='checkbox', options=[{'label': 'Show Data Table', 'value': 'show-data-table'}], value=[]),
+        
+        # Tabs
+        dcc.Tabs(id="tabs", value='tab-1', children=[
+            dcc.Tab(label='Tab 1', value='tab-1'),
+            dcc.Tab(label='Tab 2', value='tab-2'),
+        ]),
+        
+        # Tab content
+        html.Div(id='tabs-content')
+    ]
 )
 
 @app.callback(
     Output(component_id='graph-output', component_property='figure'),
-    Input(component_id='my-radio', component_property='value')
+    Output('tabs-content', 'children'),
+    Input(component_id='my-radio', component_property='value'),
+    State('checkbox', 'value')
 )
-def update_my_graph(val_chosen):
+def update_my_graph(val_chosen, checkbox_value):
     if val_chosen == 'Country Counts':
-        return fig_country_counts
+        return fig_country_counts, None
+    elif val_chosen == 'Aroma vs Flavor':
+        # Add your aroma vs flavor scatter plot here
+        return None, "You selected Aroma vs Flavor tab"
+    elif val_chosen == 'Processing Method Comparison':
+        # Add your processing method comparison plot here
+        return None, "You selected Processing Method Comparison tab"
 
 if __name__ == '__main__':
     app.run_server(debug=True)
