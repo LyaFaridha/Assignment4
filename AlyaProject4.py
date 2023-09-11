@@ -12,6 +12,8 @@ data_url = "https://raw.githubusercontent.com/LyaFaridha/Assignment4/main/df_ara
 df = pd.read_csv(data_url)
 
 # Create a bar chart for the 'Country of Origin' counts
+
+# Create a bar chart for the 'Country of Origin' counts
 country_counts = df['Country of Origin'].value_counts()
 fig_country_counts = px.bar(country_counts, x=country_counts.index, y=country_counts.values)
 
@@ -24,70 +26,36 @@ fig_country_counts.update_layout(
 app.layout = html.Div(
     [
         html.H1("Data Visualization"),
-        dcc.RadioItems(id='my-radio', options=['Country Counts'], value='Country Counts', inline=True),
-        dcc.Graph(id='graph-output', figure={}),
-        html.Br(),
         dcc.Checklist(
-            id='my-checkbox',
+            id='show-chart',
             options=[
-                {'label': 'Show Data Table', 'value': 'show-table'},
-                # Add more options if needed
+                {'label': 'Show Country Counts Chart', 'value': 'show-chart'}
             ],
             value=[],  # Initialize with no selected options
         ),
-        dcc.Tabs(id='tabs', value='tab-1', children=[
-            dcc.Tab(label='Tab 1', value='tab-1'),
-            dcc.Tab(label='Tab 2', value='tab-2'),
-            # Add more tabs if needed
-        ]),
-        html.Div(id='tabs-content'),
+        dcc.Graph(id='graph-output'),
     ]
 )
 
 @app.callback(
     Output(component_id='graph-output', component_property='figure'),
-    Output('tabs-content', 'children'),
-    Input(component_id='my-radio', component_property='value'),
-    Input('my-checkbox', 'value'),
-    Input('tabs', 'value')
+    Input(component_id='show-chart', component_property='value')
 )
-def update_my_graph(val_chosen, checkbox_value, tab_value):
-    graphs = []  # List to hold the selected graphs
-    if val_chosen == 'Country Counts':
-        graphs.append(fig_country_counts)
+def update_chart(show_chart):
+    if 'show-chart' in show_chart:
+        return fig_country_counts
+    else:
+        return {}
 
-    tabs_content = []  # List to hold tab content
-    if 'show-table' in checkbox_value:
-        # Display data table when the 'Show Data Table' checkbox is selected
-        tabs_content.append(
-            html.Div([
-                html.H3('Data Table'),
-                dcc.DataTable(
-                    id='datatable',
-                    columns=[{"name": i, "id": i} for i in df.columns],
-                    data=df.to_dict('records'),
-                )
-            ])
-        )
+if __name__ == '__main__':
+    app.run_server(debug=True)
+In this modified code, a checklist (dcc.Checklist) is added to toggle the visibility of the fig_country_counts bar chart. When the "Show Country Counts Chart" checkbox is selected, the chart is displayed; otherwise, it is hidden.
 
-    if tab_value == 'tab-1':
-        # Add content for Tab 1
-        tabs_content.append(
-            html.Div([
-                html.H3('Tab 1 Content'),
-                # Add your content here
-            ])
-        )
-    elif tab_value == 'tab-2':
-        # Add content for Tab 2
-        tabs_content.append(
-            html.Div([
-                html.H3('Tab 2 Content'),
-                # Add your content here
-            ])
-        )
 
-    return graphs, tabs_content
+
+
+
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
