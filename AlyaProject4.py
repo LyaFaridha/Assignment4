@@ -8,7 +8,7 @@ server = app.server
 app.title = "MCM7003 Data Visualization Interactive Demo"
 
 # Load data from the provided URL
-data_url = "https://raw.githubusercontent.com/LyaFaridha/Assignment3/main/df_arabica_clean.csv"
+data_url = "https://raw.githubusercontent.com/LyaFaridha/Assignment4/main/df_arabica_clean.csv"
 df = pd.read_csv(data_url)
 
 # Create a bar chart for the 'Country of Origin' counts
